@@ -81,13 +81,13 @@ if has_stats:
         f"\x1b[93mRank:\x1b[0m        {github_stats.user_rank.level} ({github_stats.user_rank.percentile:.1f}%)",
     ]
     
-    # Top linguagens
+    # Top languages
     if github_stats.languages_sorted:
         top_langs = github_stats.languages_sorted[:3]
         langs_str = ", ".join([f"{lang[0]} ({lang[1]}%)" for lang in top_langs])
         stats_lines.append(f"\x1b[93mTop Langs:\x1b[0m   {langs_str}")
 else:
-    # Dados de exemplo
+    # Example data
     stats_lines = [
         f"\x1b[93mName:\x1b[0m        {USERNAME}",
         "\x1b[93mFollowers:\x1b[0m   --",
@@ -107,7 +107,7 @@ t.clone_frame(10)
 t.gen_text("\x1b[96m================================\x1b[0m", row_num=6+len(stats_lines))
 t.clone_frame(15)
 
-# -- Clear e Skills --
+# -- Clear and Skills --
 t.gen_prompt(row_num=7+len(stats_lines))
 t.gen_typing_text("clear", row_num=7+len(stats_lines), contin=True, speed=1)
 t.clone_frame(5)
@@ -139,7 +139,7 @@ t.clone_frame(10)
 t.gen_text("\x1b[96m==================\x1b[0m", row_num=4+len(skills))
 t.clone_frame(5)
 
-# -- Mensagem final --
+# -- Final message --
 final_row = 5 + len(skills)
 t.gen_prompt(row_num=final_row)
 t.gen_typing_text("echo 'Thanks for visiting my profile!'", row_num=final_row, contin=True, speed=1)
@@ -147,9 +147,9 @@ t.clone_frame(5)
 t.gen_text("\x1b[92mThanks for visiting my profile!\x1b[0m", row_num=final_row+1)
 t.clone_frame(40)
 
-# Gera o GIF
+# Generate the GIF
 t.gen_gif()
 
-print("\n GIF gerado: output.gif")
-print("\nPara usar no seu README.md:")
+print("\n GIF generated: output.gif")
+print("\nTo use in your README.md:")
 print('![Terminal GIF](./output.gif)')
