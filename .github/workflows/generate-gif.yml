@@ -1,0 +1,42 @@
+name: Generate Terminal GIF
+
+on:
+  schedule:
+    # Roda todo dia as 6h da manha (UTC)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Permite rodar manualmente
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-gif:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install dependencies
+        run: |
+          pip install github-readme-terminal requests python-dotenv
+
+      - name: Generate GIF
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: python generate_with_stats.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add output.gif
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update terminal GIF [skip ci]" && git push)
