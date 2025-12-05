@@ -1,0 +1,6 @@
+frames/
+.env
+*.pyc
+__pycache__/
+.venv/
+debug_stats.py
