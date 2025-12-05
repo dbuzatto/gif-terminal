@@ -4,23 +4,23 @@ import os
 import requests
 
 # ============================================
-# Terminal GIF com GitHub Stats
+# Terminal GIF with GitHub Stats
 # ============================================
 # 
-# REQUISITOS:
-# 1. Criar um arquivo .env na pasta do projeto
-# 2. Adicionar: GITHUB_TOKEN=seu_token_aqui
+# REQUIREMENTS:
+# 1. Create a .env file in the project folder
+# 2. Add: GITHUB_TOKEN=your_token_here
 #
-# Para criar o token:
-# - Va em: https://github.com/settings/tokens
-# - Clique em "Generate new token (classic)"
-# - Selecione apenas: read:user
-# - Copie o token e coloque no .env
+# To create the token:
+# - Go to: https://github.com/settings/tokens
+# - Click "Generate new token (classic)"
+# - Select only: read:user
+# - Copy the token and add it to .env
 # ============================================
 
-USERNAME = "dbuzatto"  # <- Seu username do GitHub
+USERNAME = "dbuzatto"  # <- Your GitHub username
 
-# Funcao para buscar numero real de repos
+# Function to fetch real number of repos
 def get_total_repos(username):
     try:
         response = requests.get(f"https://api.github.com/users/{username}")
@@ -30,26 +30,26 @@ def get_total_repos(username):
         pass
     return None
 
-# Tenta buscar estatisticas do GitHub
+# Try to fetch GitHub statistics
 try:
     github_stats = gifos.utils.fetch_github_stats(user_name=USERNAME)
     has_stats = github_stats is not None
     if not has_stats:
-        print("Aviso: Nao foi possivel buscar stats do GitHub")
-        print("Configure GITHUB_TOKEN no arquivo .env")
+        print("Warning: Could not fetch GitHub stats")
+        print("Configure GITHUB_TOKEN in .env file")
 except Exception as e:
-    print(f"Aviso: Erro ao buscar stats do GitHub: {e}")
-    print("Usando dados de exemplo...")
+    print(f"Warning: Error fetching GitHub stats: {e}")
+    print("Using example data...")
     has_stats = False
     github_stats = None
 
-# Busca numero real de repos
+# Fetch real number of repos
 total_repos = get_total_repos(USERNAME)
 
-# Configuracoes do terminal
+# Terminal settings
 t = gifos.Terminal(width=700, height=450, xpad=10, ypad=10)
 
-# -- Prompt inicial --
+# -- Initial prompt --
 t.set_prompt(f"\x1b[91m{USERNAME}\x1b[0m@\x1b[93mgithub\x1b[0m ~> ")
 
 # -- Boot sequence --
@@ -58,12 +58,12 @@ t.clone_frame(5)
 t.gen_text("\x1b[32m[OK]\x1b[0m System ready", row_num=2)
 t.clone_frame(10)
 
-# -- Comando para ver stats --
+# -- Command to view stats --
 t.gen_prompt(row_num=3)
 t.gen_typing_text("github-stats --user " + USERNAME, row_num=3, contin=True, speed=1)
 t.clone_frame(5)
 
-# -- Exibe as estatisticas --
+# -- Display statistics --
 t.gen_text("", row_num=4)
 t.gen_text(f"\x1b[96m=== GitHub Stats for {USERNAME} ===\x1b[0m", row_num=5)
 t.clone_frame(3)

@@ -1,47 +1,47 @@
-# Terminal GIF para GitHub Profile
+# Terminal GIF for GitHub Profile
 
-GIF animado com estatisticas do GitHub gerado automaticamente.
+Animated GIF with GitHub stats, automatically generated.
 
-## Como usar
+## How to Use
 
-1. Faca fork deste repositorio
-2. Adicione o secret `GH_TOKEN` nas configuracoes do repositorio:
-   - Va em Settings > Secrets and variables > Actions
-   - Clique em "New repository secret"
-   - Nome: `GH_TOKEN`
-   - Value: seu Personal Access Token do GitHub (com permissao `read:user`)
+1. Fork this repository
+2. Add the `GH_TOKEN` secret in your repository settings:
+   - Go to Settings > Secrets and variables > Actions
+   - Click "New repository secret"
+   - Name: `GH_TOKEN`
+   - Value: your GitHub Personal Access Token (with `read:user` permission)
 
-3. Edite `generate_with_stats.py` e mude o `USERNAME` para seu usuario
+3. Edit `generate_with_stats.py` and change `USERNAME` to your username
 
-4. O GIF sera gerado automaticamente todo dia as 6h (UTC)
+4. The GIF will be automatically generated every day at 6am (UTC)
 
-5. Use no seu README.md do perfil:
+5. Use it in your profile README.md:
 
 ```markdown
-![Terminal GIF](https://raw.githubusercontent.com/SEU_USER/SEU_REPO/main/output.gif)
+![Terminal GIF](https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/output.gif)
 ```
 
-## Rodar localmente
+## Run Locally
 
 ```bash
-# Instalar dependencias
+# Install dependencies
 pip install github-readme-terminal requests python-dotenv
 
-# Instalar ffmpeg (macOS)
+# Install ffmpeg (macOS)
 brew install ffmpeg
 
-# Configurar token (opcional, para stats completas)
+# Configure token (optional, for complete stats)
 cp .env.example .env
-# Edite o .env com seu GITHUB_TOKEN
+# Edit .env with your GITHUB_TOKEN
 
-# Gerar GIF
+# Generate GIF
 python generate_with_stats.py
 ```
 
-## Personalizar
+## Customize
 
-Edite o arquivo `generate_with_stats.py` para:
-- Mudar suas skills
-- Ajustar cores
-- Modificar o layout
-- Adicionar mais comandos
+Edit `generate_with_stats.py` to:
+- Change your skills
+- Adjust colors
+- Modify the layout
+- Add more commands
