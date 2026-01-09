@@ -83,7 +83,7 @@ if has_stats:
     
     # Top languages
     if github_stats.languages_sorted:
-        top_langs = github_stats.languages_sorted[:3]
+        top_langs = github_stats.languages_sorted[:5]
         langs_str = ", ".join([f"{lang[0]} ({lang[1]}%)" for lang in top_langs])
         stats_lines.append(f"\x1b[93mTop Langs:\x1b[0m   {langs_str}")
 else:
