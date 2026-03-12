@@ -1,13 +1,13 @@
-name: Generate Terminal GIF
+name: Generate Terminal GIF (Liquid Glass)
 
 on:
   schedule:
     # Runs daily at 6am (UTC)
     - cron: '0 6 * * *'
-  workflow_dispatch: # Allows manual triggering
+  workflow_dispatch:
   push:
     branches:
-      - main
+      - feature/liquid-glass-theme
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ permissions:
 jobs:
   generate-gif:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,12 +32,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install github-readme-terminal requests python-dotenv
+          pip install github-readme-terminal requests python-dotenv Pillow
 
       - name: Generate GIF
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: python generate_with_stats.py
+        run: python generate_liquid_glass.py
 
       - name: Commit and push if changed
         run: |
