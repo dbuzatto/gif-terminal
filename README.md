@@ -97,12 +97,20 @@ sudo apt install ffmpeg
 
 > **No ffmpeg?** The scripts include a PIL fallback — the GIF will still be generated.
 
-### Configure your GitHub Token
+### Configure your GitHub Token and username
 
 ```bash
 cp .env.example .env
-# Edit .env and set GITHUB_TOKEN=your_token_here
 ```
+
+Edit `.env` and fill in both values:
+
+```env
+GITHUB_TOKEN=your_token_here
+GIT_USERNAME=your_github_username   # required for local runs
+```
+
+> On GitHub Actions the username is auto-detected — `GIT_USERNAME` is only needed when running locally.
 
 ### Generate the GIF
 
