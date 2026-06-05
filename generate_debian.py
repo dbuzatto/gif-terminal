@@ -53,6 +53,14 @@ USERNAME = (
     or "dbuzatto"
 )
 
+# Wallpaper file inside assets/. Override via WALLPAPER repo variable or env var.
+# Example: WALLPAPER=debian_dark_wallpaper.jpg
+_wallpaper_file = os.environ.get("WALLPAPER", "debian_wallpaper.png")
+WALLPAPER_PATH  = os.path.join("assets", _wallpaper_file)
+if not os.path.exists(WALLPAPER_PATH):
+    print(f"Warning: wallpaper '{WALLPAPER_PATH}' not found — falling back to assets/debian_wallpaper.png")
+    WALLPAPER_PATH = "assets/debian_wallpaper.png"
+
 # ---- Layout constants ----
 GIF_W, GIF_H  = 740, 540
 
@@ -220,20 +228,35 @@ def prepare_debian_layers(wallpaper_path):
         title_text, fill=(210, 210, 210, 230), font=title_font,
     )
 
-    # Window buttons — right-aligned (GNOME default: right side)
-    # Close (red), Maximize (gray), Minimize (gray)  — right to left
-    btn_r  = 7
-    btn_y  = WIN_Y + TITLE_H // 2
+    # Window buttons — right-aligned, icon style (˅ ◇ ×)
+    btn_y   = WIN_Y + TITLE_H // 2
     close_x = WIN_X + WIN_W - 14
-    max_x   = close_x - 22
-    min_x   = max_x   - 22
+    max_x   = close_x - 20
+    min_x   = max_x   - 20
 
-    d.ellipse([(close_x-btn_r, btn_y-btn_r), (close_x+btn_r, btn_y+btn_r)],
-              fill=(180, 24, 24, 235), outline=(220, 60, 60, 180))   # Debian red close
-    d.ellipse([(max_x-btn_r,   btn_y-btn_r), (max_x+btn_r,   btn_y+btn_r)],
-              fill=(65, 65, 70, 210),  outline=(100, 100, 105, 160)) # gray maximize
-    d.ellipse([(min_x-btn_r,   btn_y-btn_r), (min_x+btn_r,   btn_y+btn_r)],
-              fill=(65, 65, 70, 210),  outline=(100, 100, 105, 160)) # gray minimize
+    icon_color = (215, 215, 215, 200)
+    btn_bg     = (55, 55, 60, 170)
+    btn_hw, btn_hh = 9, 7
+
+    for bx in (min_x, max_x, close_x):
+        d.rounded_rectangle(
+            [(bx - btn_hw, btn_y - btn_hh), (bx + btn_hw, btn_y + btn_hh)],
+            radius=3, fill=btn_bg,
+        )
+
+    # Minimize: chevron ˅
+    d.line([(min_x - 4, btn_y - 2), (min_x,     btn_y + 2)], fill=icon_color, width=1)
+    d.line([(min_x,     btn_y + 2), (min_x + 4, btn_y - 2)], fill=icon_color, width=1)
+
+    # Maximize: diamond ◇
+    d.line([(max_x,     btn_y - 4), (max_x + 4, btn_y    )], fill=icon_color, width=1)
+    d.line([(max_x + 4, btn_y    ), (max_x,     btn_y + 4)], fill=icon_color, width=1)
+    d.line([(max_x,     btn_y + 4), (max_x - 4, btn_y    )], fill=icon_color, width=1)
+    d.line([(max_x - 4, btn_y    ), (max_x,     btn_y - 4)], fill=icon_color, width=1)
+
+    # Close: ×
+    d.line([(close_x - 4, btn_y - 4), (close_x + 4, btn_y + 4)], fill=icon_color, width=1)
+    d.line([(close_x + 4, btn_y - 4), (close_x - 4, btn_y + 4)], fill=icon_color, width=1)
 
     # Menu bar items
     menu_font  = _default_font(10)
@@ -275,8 +298,8 @@ def post_process_frames(base_canvas, chrome, frames_dir=FRAMES_DIR):
 # Colours that must survive GIF quantisation — UI chrome + all Tango ANSI values.
 _PALETTE_HINTS = [
     # Chrome
-    (180,  24,  24),  # close button red
-    ( 65,  65,  70),  # gray buttons
+    ( 55,  55,  60),  # button backgrounds
+    (215, 215, 215),  # button icons
     (210, 210, 210),  # title text
     (200, 200, 200),  # menu text
     # Tango ANSI (matches the overrides above)
@@ -452,7 +475,7 @@ t.clone_frame(40)
 # Post-process frames → Debian theme
 # ============================================
 
-base_canvas, chrome = prepare_debian_layers("assets/debian_wallpaper.png")
+base_canvas, chrome = prepare_debian_layers(WALLPAPER_PATH)
 post_process_frames(base_canvas, chrome)
 
 # ============================================

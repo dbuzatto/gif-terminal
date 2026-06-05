@@ -8,7 +8,7 @@
 
 [![Stars](https://img.shields.io/github/stars/dbuzatto/gif-terminal?style=flat-square&color=yellow)](https://github.com/dbuzatto/gif-terminal/stargazers)
 [![Forks](https://img.shields.io/github/forks/dbuzatto/gif-terminal?style=flat-square&color=blue)](https://github.com/dbuzatto/gif-terminal/network/members)
-[![License](https://img.shields.io/github/license/dbuzatto/gif-terminal?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/github/license/dbuzatto?style=flat-square)](LICENSE)
 
 </div>
 
@@ -18,9 +18,9 @@
 
 - Fetches **real-time GitHub stats** (commits, stars, PRs, followers, rank, languages)
 - **Three themes** — classic terminal, macOS Liquid Glass, or Debian GNOME
+- **Custom wallpaper** — drop any image into `assets/` and point to it with one variable
 - **Username auto-detected** — no code editing needed after forking
 - **Auto-regenerated daily** via GitHub Actions
-- Easy to set up: fork → configure two settings → done
 
 ---
 
@@ -29,8 +29,8 @@
 | Value | Theme | Description |
 |-------|-------|-------------|
 | `default` | **Classic dark** *(default)* | Clean dark terminal, no wallpaper |
-| `macos` | **macOS Liquid Glass** | Frosted glass terminal floating over a macOS wallpaper, with traffic-light buttons |
-| `debian` | **Debian GNOME** | Classic GNOME 2 terminal with title bar, menu bar, and Tango colors over the Debian wallpaper |
+| `macos` | **macOS Liquid Glass** | Frosted glass terminal over a macOS wallpaper |
+| `debian` | **Debian GNOME** | GNOME terminal with title bar, menu bar, and Tango colors |
 
 ---
 
@@ -52,26 +52,29 @@ Go to **Settings → Secrets and variables → Actions** and add a new **secret*
 
 ### 3. Choose your theme
 
-Go to **Settings → Secrets and variables → Actions**, open the **Variables** tab and click **New repository variable**:
+Go to **Settings → Secrets and variables → Actions**, open the **Variables** tab and add:
 
 | Name | Value |
 |------|-------|
 | `THEME` | `macos` or `debian` or `default` |
 
-> If you skip this step the `default` theme (classic dark terminal, no wallpaper) is used.
+> If you skip this step the `default` theme is used.
 
-### 4. (macOS / Debian themes) Add your wallpaper
+### 4. (Optional) Set your wallpaper
 
-| Theme | File to replace |
-|-------|----------------|
-| `macos` | `assets/macos_wallpaper.jpg` |
-| `debian` | `assets/debian_wallpaper.png` |
+Upload any image to `assets/` in your fork, then add a second variable:
 
-Replace the file in `assets/` with your own image. Any resolution works — it will be cropped to fit automatically.
+| Name | Value |
+|------|-------|
+| `WALLPAPER` | filename inside `assets/` — e.g. `debian_dark_wallpaper.jpg` |
+
+This works for the `debian` theme. If `WALLPAPER` is not set, `debian_wallpaper.png` is used.
+
+For the `macos` theme, replace `assets/macos_wallpaper.jpg` directly.
 
 ### 5. Trigger the first run
 
-Go to **Actions → Generate Terminal GIF → Run workflow** to generate your first GIF immediately, or wait for the daily schedule (06:00 UTC).
+Go to **Actions → Generate Terminal GIF → Run workflow**.
 
 ### 6. Add to your profile README
 
@@ -88,44 +91,33 @@ Go to **Actions → Generate Terminal GIF → Run workflow** to generate your fi
 ```bash
 pip install github-readme-terminal requests python-dotenv Pillow
 
-# Install ffmpeg (macOS)
-brew install ffmpeg
-
-# Install ffmpeg (Ubuntu / Debian)
-sudo apt install ffmpeg
+# ffmpeg (optional — PIL fallback is used if not installed)
+brew install ffmpeg        # macOS
+sudo apt install ffmpeg    # Ubuntu / Debian
 ```
 
-> **No ffmpeg?** The scripts include a PIL fallback — the GIF will still be generated.
-
-### Configure your GitHub Token and username
+### Configure
 
 ```bash
 cp .env.example .env
+# fill in GITHUB_TOKEN and GIT_USERNAME
 ```
 
-Edit `.env` and fill in both values:
-
-```env
-GITHUB_TOKEN=your_token_here
-GIT_USERNAME=your_github_username   # required for local runs
-```
-
-> On GitHub Actions the username is auto-detected — `GIT_USERNAME` is only needed when running locally.
-
-### Generate the GIF
+### Generate
 
 ```bash
-# macOS Liquid Glass theme
-python generate_liquid_glass.py
+# Debian theme — default wallpaper
+python3 generate_debian.py
 
-# Debian GNOME theme
-python generate_debian.py
+# Debian theme — custom wallpaper
+WALLPAPER=debian_dark_wallpaper.jpg python3 generate_debian.py
 
-# Classic dark theme
-python generate_with_stats.py
+# macOS theme
+python3 generate_liquid_glass.py
+
+# Classic dark
+python3 generate_with_stats.py
 ```
-
-The output is saved as `output.gif`.
 
 ---
 
@@ -133,45 +125,29 @@ The output is saved as `output.gif`.
 
 ```
 .
-├── generate_liquid_glass.py      # macOS Liquid Glass theme
 ├── generate_debian.py            # Debian GNOME theme
+├── generate_liquid_glass.py      # macOS Liquid Glass theme
 ├── generate_with_stats.py        # Classic dark theme
 ├── assets/
-│   ├── macos_wallpaper.jpg       # Wallpaper for macOS theme
-│   └── debian_wallpaper.png      # Wallpaper for Debian theme
+│   ├── debian_wallpaper.png      # Default Debian wallpaper
+│   ├── debian_dark_wallpaper.jpg # Dark Debian wallpaper
+│   └── macos_wallpaper.jpg       # macOS wallpaper (replace with your own)
 ├── output.gif                    # Generated GIF (auto-updated by CI)
-├── .env.example                  # Environment variable template
-└── .github/
-    └── workflows/
-        └── generate-gif.yml      # Unified CI workflow (theme selected via THEME variable)
+├── .env.example
+└── .github/workflows/generate-gif.yml
 ```
 
 ---
 
-## Customization
+## Updating from a previous version
 
-### Username
-The username is **automatically detected** from your GitHub account — no code changes needed.
-When running locally, you can override it with:
-```bash
-GIT_USERNAME=your-username python generate_liquid_glass.py
-```
+If you already forked this repo, sync with upstream and you're done — nothing breaks:
 
-### Skills and content
-All three scripts share the same `skills` list and stats sections. Edit whichever script you use.
+- `THEME=debian` keeps working exactly as before
+- The window buttons changed visually from colored circles to `˅ ◇ ×` icons
+- **New:** add a `WALLPAPER` variable pointing to any image in `assets/` to use a custom wallpaper (see step 4 above)
 
-### Theme-specific settings
-
-**macOS Liquid Glass** (`generate_liquid_glass.py`)
-- Wallpaper → replace `assets/macos_wallpaper.jpg`
-- Glass opacity → `frosted_title` / `frosted_content` overlay alpha in `prepare_glass_layers()`
-- Text colors → `ConvertAnsiEscape.ANSI_ESCAPE_MAP_TXT_COLOR` at the top of the file
-
-**Debian GNOME** (`generate_debian.py`)
-- Wallpaper → replace `assets/debian_wallpaper.png`
-- Glass darkness → `tint_rgba` values in `prepare_debian_layers()`
-- Text colors → `ConvertAnsiEscape.ANSI_ESCAPE_MAP_TXT_COLOR` at the top of the file
-- Window layout → `TITLE_H`, `MENU_H`, `CORNER_RADIUS` constants
+No code edits required.
 
 ---
 

@@ -9,6 +9,10 @@ on:
         description: 'Theme to use (default | macos | debian)'
         required: false
         default: 'default'
+      wallpaper:
+        description: 'Wallpaper filename in assets/ for the debian theme (e.g. debian_dark_wallpaper.jpg)'
+        required: false
+        default: ''
   push:
     branches:
       - main
@@ -40,19 +44,21 @@ jobs:
       - name: Generate GIF
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          # Automatically injected by GitHub — scripts use this to detect the username.
-          # No manual changes needed when forking.
+          # Automatically injected by GitHub — no changes needed when forking.
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          # Select theme via repository variable: Settings → Secrets and variables → Actions → Variables tab → THEME
+          # Select theme via repo variable: Settings → Variables → Actions → THEME
           # Valid values: default | macos | debian   (fallback: default)
-          # Manual runs (workflow_dispatch) can also pass a theme via the input above.
           THEME: ${{ vars.THEME || inputs.theme || 'default' }}
+          # For the debian theme: filename of the wallpaper inside assets/
+          # Set via repo variable WALLPAPER (e.g. debian_dark_wallpaper.jpg)
+          # Leave empty to use the default (debian_wallpaper.png)
+          WALLPAPER: ${{ vars.WALLPAPER || inputs.wallpaper || '' }}
         run: |
-          echo "Theme: $THEME  |  User: $GITHUB_REPOSITORY_OWNER"
+          echo "Theme: $THEME  |  Wallpaper: ${WALLPAPER:-default}  |  User: $GITHUB_REPOSITORY_OWNER"
           case "$THEME" in
-            debian)  python generate_debian.py ;;
-            default) python generate_with_stats.py ;;
-            *)       python generate_liquid_glass.py ;;
+            debian)  python3 generate_debian.py ;;
+            default) python3 generate_with_stats.py ;;
+            *)       python3 generate_liquid_glass.py ;;
           esac
 
       - name: Commit and push if changed
